@@ -1,0 +1,7 @@
+.app {
+  display: flex;
+  height: calc(100vh - 2rem);
+  max-width: 60rem;
+  margin: 1rem auto;
+  background: white;
+}

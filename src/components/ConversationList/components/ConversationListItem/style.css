@@ -1,0 +1,5 @@
+.conversationListItem {
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+}

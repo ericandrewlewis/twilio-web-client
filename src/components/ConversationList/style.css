@@ -1,0 +1,4 @@
+.conversationList {
+  flex-basis: 20rem;
+  border-right: 1px solid #ddd;
+}
