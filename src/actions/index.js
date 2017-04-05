@@ -2,6 +2,9 @@ import { normalize } from 'normalizr';
 import axios from 'axios';
 import queryString from 'query-string';
 import * as schema from './schema';
+import SocketIO from 'socket.io-client';
+
+const socket = SocketIO('http://localhost:3002');
 
 function receiveConversations(conversations) {
   return {
@@ -10,7 +13,7 @@ function receiveConversations(conversations) {
   };
 };
 
-function loadMessagesById(ids) {
+export function loadMessagesById(ids) {
   return (dispatch) => {
     axios(`/message?${queryString.stringify({ids})}`)
       .then((response) => {

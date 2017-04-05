@@ -3,13 +3,18 @@ import { connect } from 'react-redux';
 import style from './style.css';
 import ConversationList from '../ConversationList';
 import Conversation from '../Conversation';
-import { loadConversations, loadMessages } from '../../actions';
+import { loadConversations, loadMessagesById } from '../../actions';
 import { getSelectedConversationId } from '../../reducers/conversations';
+import io from 'socket.io-client';
+const socket = io('http://localhost:3002');
 
 const mapDispatchToProps = (dispatch) => {
   return {
     onMount: () => {
       dispatch(loadConversations());
+      socket.on('updateMessage', ({id}) => {
+        dispatch(loadMessagesById([id]));
+      });
     }
   };
 };

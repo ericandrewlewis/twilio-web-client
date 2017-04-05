@@ -51,42 +51,49 @@ const getMessage = (request, response) => {
     });
 };
 
-const createMessage = (request, response) => {
-  const {content, to, conversationId} = request.body;
-  const message = new Message({
-    from: 'self',
-    to,
-    content,
-    conversationId,
-    status: 'sending'
-  });
-  message.save()
-    .then((doc) => {
-      response.json(doc.toJSON());
-      return twilioClient.messages.create({
-        body: content,
-        to: to,
-        from: '+15005550006'
-      }).then((twilioMessage) => {
-        return {
-          doc,
-          twilioMessage
-        }
-      })
-    })
-    .then(({doc, twilioMessage}) => {
-      return Message.update({_id: doc._id}, { status: 'sent' }).exec();
-    })
-    .catch((error) => {
-      console.error(error);
+const createMessage = ({io}) => {
+  return (request, response) => {
+    const {content, to, conversationId} = request.body;
+    const message = new Message({
+      from: 'self',
+      to,
+      content,
+      conversationId,
+      status: 'sending'
     });
+    message.save()
+      .then((doc) => {
+        response.json(doc.toJSON());
+        return twilioClient.messages.create({
+          body: content,
+          to: to,
+          from: '+15005550006'
+        }).then((twilioMessage) => {
+          return {
+            doc,
+            twilioMessage
+          }
+        })
+      })
+      .then(({doc, twilioMessage}) => {
+        return Message.update({_id: doc._id}, { status: 'sent' }).exec()
+          .then((result) => {
+            return doc;
+          });
+      }).then((message) => {
+        io.emit('updateMessage', {id: message.id});
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
 }
 
-const createRouter = () => {
+const createRouter = ({io}) => {
   const router = express.Router();
   router.get('/conversation', getConversation);
   router.get('/message', getMessage);
-  router.post('/message', createMessage);
+  router.post('/message', createMessage({io}));
   return router;
 };
 

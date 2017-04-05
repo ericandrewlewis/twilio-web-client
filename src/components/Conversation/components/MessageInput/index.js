@@ -34,19 +34,35 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     }
   });
 }
+
 class MessageInput extends Component {
-  _handleKeyPress(event) {
+  constructor(props) {
+    super(props);
+    this.state = {value: ''};
+  }
+  handleKeyPress(event) {
     if (event.key === 'Enter') {
       if (event.target.value) {
         this.props.createMessage(event.target.value);
+        this.setState({value: ''});
       }
     }
+  }
+
+  handleChange(event) {
+    this.setState({value: event.target.value});
   }
 
   render() {
     return (
       <div>
-        <input className={style.input} onKeyPress={(event) => this._handleKeyPress(event)} type="text" />
+        <input
+          type="text"
+          className={style.input}
+          value={this.state.value}
+          onKeyPress={(event) => this.handleKeyPress(event)}
+          onChange={(event) => this.handleChange(event)}
+        />
       </div>
     );
   }

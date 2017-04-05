@@ -10,7 +10,7 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const EXPRESS_PORT = process.env.EXPRESS_PORT || 3000;
-const router = require('./routes')();
+const router = require('./routes')({io});
 
 const webpackCompiler = webpack(webpackConfig);
 
