@@ -14,7 +14,10 @@ const router = require('./routes')({io});
 
 const webpackCompiler = webpack(webpackConfig);
 
-app.use( bodyParser.json() );
+app.use(bodyParser.json());
+
+// Use middleware to parse incoming form bodies
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(
   webpackDevMiddleware(webpackCompiler, {

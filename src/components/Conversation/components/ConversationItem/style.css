@@ -1,15 +1,23 @@
 .conversationItem {
   display: inline-block;
   margin-bottom: 0.5rem;
-  padding: 0.25rem;
+  padding: 0.2rem 0.4rem;
   border-radius: 0.25rem;
+  line-height: 1.3;
   color: white;
 }
 
-.statusSending {
+.fromSelf {
+  text-align: right;
+}
+.fromSelf .statusSending {
   background-color: #8EC7FF;
 }
-
-.statusSent {
+.fromSelf .statusSent {
   background-color: #1E90FF;
+}
+
+.fromOther .statusSent {
+  color: black;
+  background-color: #ddd;
 }

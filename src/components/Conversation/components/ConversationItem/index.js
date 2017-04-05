@@ -11,8 +11,12 @@ export default class ConversationItem extends Component {
         [style.statusSending]: message.status === 'sending',
         [style.statusSent]: message.status === 'sent'
     });
+    const wrapperClasses = classNames({
+      [style.fromSelf]: message.from === 'self',
+      [style.fromOther]: message.from !== 'self'
+    });
     return (
-      <div>
+      <div className={wrapperClasses}>
         <div className={classes}>{this.props.message.content}</div>
       </div>
     );

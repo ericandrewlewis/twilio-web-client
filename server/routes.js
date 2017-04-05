@@ -3,6 +3,7 @@ const Conversation = require('./db').Conversation;
 const Message = require('./db').Message;
 const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
 const twilioAuthToken = process.env.TWILIO_ACCOUNT_AUTH_TOKEN;
+const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
 const twilio = require('twilio');
 const twilioClient = new twilio.RestClient(twilioAccountSid, twilioAuthToken);
 
@@ -67,7 +68,7 @@ const createMessage = ({io}) => {
         return twilioClient.messages.create({
           body: content,
           to: to,
-          from: '+15005550006'
+          from: twilioPhoneNumber
         }).then((twilioMessage) => {
           return {
             doc,
@@ -89,11 +90,36 @@ const createMessage = ({io}) => {
   }
 }
 
+const twilioWebhookHandler = ({io}) => {
+  return (request, response) => {
+    response.send("<Response></Response>");
+    const from = request.body.From;
+    const content = request.body.Body;
+    Conversation.findOne({
+      with: from
+    }).exec().then((conversation) => {
+      const message = new Message({
+        from,
+        to: 'self',
+        content,
+        conversationId: conversation.id,
+        status: 'sent'
+      });
+      return message.save();
+    }).then((doc) => {
+      io.emit('updateMessage', {id: doc.id});
+    }).catch((error) => {
+      console.error(error);
+    });
+  };
+}
+
 const createRouter = ({io}) => {
   const router = express.Router();
   router.get('/conversation', getConversation);
   router.get('/message', getMessage);
   router.post('/message', createMessage({io}));
+  router.post('/twilio-webhook-handler', twilioWebhookHandler({io}));
   return router;
 };
 
