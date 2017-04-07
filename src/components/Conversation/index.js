@@ -23,7 +23,7 @@ class Conversation extends Component {
     const {messages} = this.props;
     return (
       <div className={style.conversation}>
-        <div>
+        <div className={style.conversationItemList}>
           {messages.map((message, index) => {
             return <ConversationItem key={index} message={message} />;
           })}

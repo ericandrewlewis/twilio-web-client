@@ -2,3 +2,8 @@
   flex-basis: 40rem;
   padding: 1rem;
 }
+
+.conversationItemList {
+  height: calc(100vh - 8rem);
+  overflow-y: scroll;
+}

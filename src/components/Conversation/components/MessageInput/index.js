@@ -56,7 +56,7 @@ class MessageInput extends Component {
   render() {
     return (
       <div>
-        <input
+        <textarea
           type="text"
           className={style.input}
           value={this.state.value}
