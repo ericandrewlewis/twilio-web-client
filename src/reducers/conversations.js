@@ -2,6 +2,17 @@ export function conversations(state = [], action) {
   switch(action.type) {
     case 'RECEIVE_CONVERSATIONS':
       return state = action.conversations;
+    case 'NEW_CONVERSATION':
+      return state = {
+        ...state,
+        new: {
+          with: '',
+          lastMessage: '',
+          unread: false,
+          _id: 'new',
+          lastMessageId: ''
+        }
+      };
     default:
       return state;
   }

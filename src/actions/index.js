@@ -6,6 +6,12 @@ import SocketIO from 'socket.io-client';
 
 const socket = SocketIO('http://localhost:3002');
 
+export function createNewConversation() {
+  return {
+    type: 'NEW_CONVERSATION'
+  };
+}
+
 function receiveConversations(conversations) {
   return {
     type: 'RECEIVE_CONVERSATIONS',
@@ -55,6 +61,15 @@ function receiveMessages(messages) {
 
 export function selectConversation(id) {
   return (dispatch) => {
+    if (id === 'new') {
+      dispatch(
+        {
+          type: 'SET_SELECTED_CONVERSATION',
+          with: id
+        }
+      );
+      return;
+    }
     axios(`/message?${queryString.stringify({conversationId: id})}`)
       .then((response) => {
         const messagesById = normalize(response.data, schema.arrayOfMessages).entities.messages;

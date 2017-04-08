@@ -2,6 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { selectConversation } from '../../../../actions';
 import style from './style.css';
+import { getSelectedConversationId } from '../../../../reducers/conversations';
+import classNames from 'classnames';
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    active: getSelectedConversationId(state) === ownProps.conversation._id
+  }
+}
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
@@ -15,9 +23,14 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 
 class ConversationListItem extends Component {
   render() {
-    const {conversation} = this.props;
+    const {conversation, active} = this.props;
+    const classes = classNames(style.conversationListItem,
+      {
+        [style.active]: active
+      }
+    );
     return (
-      <div className={style.conversationListItem} onClick={this.props.onClick}>
+      <div className={classes} onClick={this.props.onClick}>
         <h2>{conversation.with}</h2>
         <p>{conversation.lastMessage}</p>
       </div>
@@ -26,6 +39,6 @@ class ConversationListItem extends Component {
 }
 
 export default connect(
-  undefined,
+  mapStateToProps,
   mapDispatchToProps
 )(ConversationListItem);

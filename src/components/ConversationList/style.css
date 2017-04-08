@@ -2,3 +2,8 @@
   flex-basis: 20rem;
   border-right: 1px solid #ddd;
 }
+
+.conversationListButtons {
+  border-bottom: 1px solid #ddd;
+  padding: 1rem;
+}

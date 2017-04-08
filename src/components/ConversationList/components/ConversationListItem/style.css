@@ -3,3 +3,8 @@
   border-bottom: 1px solid #ddd;
   cursor: pointer;
 }
+
+.active {
+  background: #1E90FF;
+  color: white;
+}

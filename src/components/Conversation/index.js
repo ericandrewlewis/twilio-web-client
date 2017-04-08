@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import style from './style.css';
 import ConversationItem from './components/ConversationItem';
 import MessageInput from './components/MessageInput';
-import { getSelectedConversationId } from '../../reducers/conversations';
+import { getSelectedConversationId, getConversationById } from '../../reducers/conversations';
 import { getMessagesForConversationId } from '../../reducers/messages';
 
 const mapStateToProps = (state) => {
@@ -12,6 +12,7 @@ const mapStateToProps = (state) => {
     messages = getMessagesForConversationId(state, getSelectedConversationId(state));
   }
   return {
+    conversation: getConversationById(state, getSelectedConversationId(state)),
     messages
   };
 }
@@ -46,6 +47,9 @@ class Conversation extends Component {
   componentDidUpdate(prevProps) {
     const latestMessage = this.props.messages[this.props.messages.length-1];
     const prevLatestMessage = prevProps.messages[prevProps.messages.length-1];
+    if (!latestMessage || !prevLatestMessage) {
+      return;
+    }
     if (latestMessage.date > prevLatestMessage.date) {
       const el = this.conversationItemList;
       const start = el.scrollTop;
@@ -56,15 +60,35 @@ class Conversation extends Component {
     }
   }
 
-  render() {
+  renderHeader() {
+    const {conversation} = this.props;
+    if (conversation._id === 'new') {
+      return (
+        <div>To: <input /></div>
+      );
+    }
+    return (
+      <div>To: {conversation.with}</div>
+    );
+  }
+
+  renderMessages() {
     const {messages} = this.props;
     return (
+      <div className={style.conversationItemList} ref={(div) => { this.conversationItemList = div; }}>
+        {messages.map((message, index) => {
+          return <ConversationItem key={index} message={message} />;
+        })}
+      </div>
+    );
+  }
+
+  render() {
+    const {conversation} = this.props;
+    return (
       <div className={style.conversation}>
-        <div className={style.conversationItemList} ref={(div) => { this.conversationItemList = div; }}>
-          {messages.map((message, index) => {
-            return <ConversationItem key={index} message={message} />;
-          })}
-        </div>
+        {this.renderHeader()}
+        {this.renderMessages()}
         <MessageInput />
       </div>
     );
