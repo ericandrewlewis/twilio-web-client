@@ -95,9 +95,19 @@ const twilioWebhookHandler = ({io}) => {
     response.send("<Response></Response>");
     const from = request.body.From;
     const content = request.body.Body;
-    Conversation.findOne({
+    return Conversation.findOne({
       with: from
     }).exec().then((conversation) => {
+      if (!conversation) {
+        const newConversation = new Conversation({
+          with: from,
+          lastMessage: 'hi',
+          unread: true
+        });
+        return newConversation.save();
+      }
+      return conversation;
+    }).then((conversation) => {
       const message = new Message({
         from,
         to: 'self',
