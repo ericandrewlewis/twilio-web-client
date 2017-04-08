@@ -5,24 +5,14 @@ import { getConversationById, getSelectedConversationId } from '../../../../redu
 import style from './style.css';
 
 const mapStateToProps = (state) => {
-  if (getSelectedConversationId(state)) {
-    const conversation = getConversationById(
-      state,
-      getSelectedConversationId(state)
-    );
-    return {
-      to: conversation.with
-    }
-  }
-
-  let to;
-  if (conversation) {
-    to = conversation.with;
-  }
+  const conversation = getConversationById(
+    state,
+    getSelectedConversationId(state)
+  );
   return {
-    to,
-    conversationId: conversation._id
-  };
+    to: conversation.with,
+    conversationId: getSelectedConversationId(state)
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {

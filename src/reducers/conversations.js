@@ -1,7 +1,10 @@
-export function conversations(state = [], action) {
+export function conversations(state = {}, action) {
   switch(action.type) {
     case 'RECEIVE_CONVERSATIONS':
-      return state = action.conversations;
+      return {
+        ...state,
+        ...action.conversations
+      };
     case 'NEW_CONVERSATION':
       return state = {
         ...state,
@@ -13,6 +16,10 @@ export function conversations(state = [], action) {
           lastMessageId: ''
         }
       };
+    case 'DELETE_NEW_CONVERSATION':
+      const newState = {...state};
+      Reflect.deleteProperty(newState, 'new');
+      return newState;
     default:
       return state;
   }
@@ -22,6 +29,8 @@ export function selectedConversation(state = '', action) {
   switch(action.type) {
     case 'SET_SELECTED_CONVERSATION':
       return state = action.with;
+    case 'DESELECT_CONVERSATION':
+      return '';
     default:
       return state;
   }

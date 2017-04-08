@@ -5,6 +5,7 @@ import ConversationItem from './components/ConversationItem';
 import MessageInput from './components/MessageInput';
 import { getSelectedConversationId, getConversationById } from '../../reducers/conversations';
 import { getMessagesForConversationId } from '../../reducers/messages';
+import { receiveConversations } from '../../actions';
 
 const mapStateToProps = (state) => {
   let messages = [];
@@ -15,6 +16,23 @@ const mapStateToProps = (state) => {
     conversation: getConversationById(state, getSelectedConversationId(state)),
     messages
   };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {dispatch};
+};
+
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+  return Object.assign({}, ownProps, stateProps, {
+    toInputChange: (event) => {
+      const newConversation = Object.assign({}, stateProps.conversation, {
+        with: event.target.value
+      });
+      dispatchProps.dispatch(receiveConversations({
+        new: newConversation
+      }));
+    }
+  });
 }
 
 const animate = (callback, duration) => {
@@ -64,7 +82,7 @@ class Conversation extends Component {
     const {conversation} = this.props;
     if (conversation._id === 'new') {
       return (
-        <div>To: <input /></div>
+        <div>To: <input onChange={(event) => {this.props.toInputChange(event)}} /></div>
       );
     }
     return (
@@ -97,5 +115,6 @@ class Conversation extends Component {
 
 export default connect(
   mapStateToProps,
-  undefined
+  mapDispatchToProps,
+  mergeProps
 )(Conversation);

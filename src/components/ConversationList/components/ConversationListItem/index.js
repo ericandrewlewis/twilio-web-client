@@ -29,6 +29,13 @@ class ConversationListItem extends Component {
         [style.active]: active
       }
     );
+    if (conversation._id === 'new') {
+      return (
+        <div className={classes} onClick={this.props.onClick}>
+          <h2>New Message</h2>
+        </div>
+      )
+    }
     return (
       <div className={classes} onClick={this.props.onClick}>
         <h2>{conversation.with}</h2>

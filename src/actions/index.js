@@ -12,7 +12,13 @@ export function createNewConversation() {
   };
 }
 
-function receiveConversations(conversations) {
+function deselectConversation() {
+  return {
+    type: 'DESELECT_CONVERSATION'
+  }
+}
+
+export function receiveConversations(conversations) {
   return {
     type: 'RECEIVE_CONVERSATIONS',
     conversations
@@ -59,15 +65,21 @@ function receiveMessages(messages) {
   };
 };
 
+function deleteNewConversation() {
+  return {
+    type: 'DELETE_NEW_CONVERSATION'
+  };
+}
+
 export function selectConversation(id) {
   return (dispatch) => {
+    dispatch(
+      {
+        type: 'SET_SELECTED_CONVERSATION',
+        with: id
+      }
+    );
     if (id === 'new') {
-      dispatch(
-        {
-          type: 'SET_SELECTED_CONVERSATION',
-          with: id
-        }
-      );
       return;
     }
     axios(`/message?${queryString.stringify({conversationId: id})}`)
@@ -75,12 +87,6 @@ export function selectConversation(id) {
         const messagesById = normalize(response.data, schema.arrayOfMessages).entities.messages;
         dispatch(
           receiveMessages(messagesById)
-        );
-        dispatch(
-          {
-            type: 'SET_SELECTED_CONVERSATION',
-            with: id
-          }
         );
       })
       .catch((error) => {
@@ -98,6 +104,11 @@ export function createMessage({content, to, conversationId}) {
     })
       .then((response) => {
         const messagesById = normalize([response.data], schema.arrayOfMessages).entities.messages;
+        if (conversationId === 'new') {
+          dispatch(deselectConversation());
+          dispatch(deleteNewConversation());
+          dispatch(loadConversations());
+        }
         dispatch(
           receiveMessages(messagesById)
         );

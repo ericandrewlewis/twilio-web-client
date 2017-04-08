@@ -54,16 +54,29 @@ const getMessage = (request, response) => {
 
 const createMessage = ({io}) => {
   return (request, response) => {
-    const {content, to, conversationId} = request.body;
-    const message = new Message({
-      from: 'self',
-      to,
-      content,
-      conversationId,
-      status: 'sending'
-    });
-    message.save()
-      .then((doc) => {
+    let {content, to} = request.body;
+    Conversation.findOne({
+      with: to
+    }).exec().then((conversation) => {
+      if (!conversation) {
+        const newConversation = new Conversation({
+          with: to,
+          lastMessage: 'hi',
+          unread: true
+        });
+        return newConversation.save();
+      }
+      return conversation;
+    }).then((conversation) => {
+      const message = new Message({
+        from: 'self',
+        to,
+        content,
+        conversationId: conversation.id,
+        status: 'sending'
+      });
+      return message.save();
+    }).then((doc) => {
         response.json(doc.toJSON());
         return twilioClient.messages.create({
           body: content,
